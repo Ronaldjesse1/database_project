@@ -1,62 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo</title>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Demo</title>
 </head>
 <body>
-    DB<input type = 'text' value = 'notes' id = 'txtDB'>
-    Version <input type = 'text' value = '1' id = 'txVersion'>
-    <button id = 'btnCreateDB'>Create DB</button>
-    <button id = 'addNote'>Add notes</button>
-
-    <script>
-        let db = null
-        const btnCreateDB = document.getElementById('btnCreateDB')
-        const btnAddNote = document.getElementById('addNote')
-        btnCreateDB.addEventListener('click', createDB)
-        btnAddNote.addEventListener('click', addNote)
-        function addNote(){
-            const note = {
-                title:"note1",
-                text:"This is my note"
-            }
-
-            const tx = db.transaction("personal_notes", "readwrite")
-            tx.onerror = e => alert('error'+ e.target.error)
-
-            const pNotes = tx.objectStore('personal_notes')
-            pNotes.add(note)
-        }
-        function createDB(){
-            const dbName = document.getElementById('txtDB').value
-            const dbVersion = document.getElementById('txVersion').value
-            const request =  indexedDB.open(dbName, dbVersion)
-
-            //on upgrade needed
-            request.onupgradeneeded = e => {
-                db = e.target.result 
-
-                var pNotes = db.createObjectStore('personal_notes', {keyPath: 'title'})
-                var todoNotes = db.createObjectStore('todoNotes', {keyPath: 'title'})
-
-                alert('upgrade is called database name:' + db.name + ', version:' + db.version)
-
-            }
-            //on success
-            request.onsuccess = e => {
-                db = e.target.result
-                alert('success is called database name:' + db.name + ', version:' + db.version)
-            }
-            //on error 
-            request.onerror = e => { 
-                alert('error' + e.target.error)
-            }
-        }
-        
-        
-    </script>
+   DB<input type = 'text' value = 'notes' id = 'txtDB'>
+   Version <input type = 'text' value = '1' id = 'txVersion'>
+   <button id = 'btnCreateDB'>Create DB</button>
+   <button id = 'addNote'>Add notes</button>
+ 
+   <script>
+       let db = null
+       const btnCreateDB = document.getElementById('btnCreateDB')
+       const btnAddNote = document.getElementById('addNote')
+       btnCreateDB.addEventListener('click', createDB)
+       btnAddNote.addEventListener('click', add)
+       function add(){
+           const note = [{
+               title:"One Piece",
+               source:"https://www.youtube.com/watch?v=H4b2YjVWgqo",
+               song:"https://www.youtube.com/watch?v=dM7x1PNZDo0"
+           }, {
+               title:"Kingdom",
+               source:"https://www.youtube.com/watch?v=Xi7xa3fzXQ4"
+           },
+           {
+               title:"Naruto",
+               source:"https://www.youtube.com/watch?v=RzClCJFpSoM",
+               song:"https://www.youtube.com/watch?v=ZFoJYI7Q4iA"
+           }
+           ]
+           console.log(db)
+           const tx = db.transaction("anime", "readwrite")
+           tx.onerror = e => alert('error'+ e.target.error)
+ 
+           const nono = tx.objectStore('anime')
+ 
+           for(i=0; i<note.length; i++){
+               nono.add(note[i])
+           }
+       }
+       function createDB(){
+           const dbName = document.getElementById('txtDB').value
+           const dbVersion = document.getElementById('txVersion').value
+           const request =  indexedDB.open(dbName, dbVersion)
+ 
+           //on upgrade needed
+           request.onupgradeneeded = e => {
+               db = e.target.result
+ 
+               var song = db.createObjectStore('song', {keyPath: 'title'})
+               var anime = db.createObjectStore('anime', {keyPath: 'title'})
+ 
+               alert('upgrade is called database name:' + db.name + ', version:' + db.version)
+ 
+           }
+           //on success
+           request.onsuccess = e => {
+               db = e.target.result
+               alert('success is called database name:' + db.name + ', version:' + db.version)
+           }
+           //on error
+           request.onerror = e => {
+               alert('error' + e.target.error)
+           }
+       }
+      
+      
+   </script>
 </body>
 </html>
+
