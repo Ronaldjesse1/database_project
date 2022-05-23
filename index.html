@@ -1,76 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Demo</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>anime and song storage</title>
 </head>
 <body>
-   DB<input type = 'text' value = 'notes' id = 'txtDB'>
-   Version <input type = 'text' value = '1' id = 'txVersion'>
-   <button id = 'btnCreateDB'>Create DB</button>
-   <button id = 'addNote'>Add notes</button>
- 
-   <script>
-       let db = null
-       const btnCreateDB = document.getElementById('btnCreateDB')
-       const btnAddNote = document.getElementById('addNote')
-       btnCreateDB.addEventListener('click', createDB)
-       btnAddNote.addEventListener('click', add)
-       function add(){
-           const note = [{
-               title:"One Piece",
-               source:"https://www.youtube.com/watch?v=H4b2YjVWgqo",
-               song:"https://www.youtube.com/watch?v=dM7x1PNZDo0"
-           }, {
-               title:"Kingdom",
-               source:"https://www.youtube.com/watch?v=Xi7xa3fzXQ4"
-           },
-           {
-               title:"Naruto",
-               source:"https://www.youtube.com/watch?v=RzClCJFpSoM",
-               song:"https://www.youtube.com/watch?v=ZFoJYI7Q4iA"
-           }
-           ]
-           console.log(db)
-           const tx = db.transaction("anime", "readwrite")
-           tx.onerror = e => alert('error'+ e.target.error)
- 
-           const nono = tx.objectStore('anime')
- 
-           for(i=0; i<note.length; i++){
-               nono.add(note[i])
-           }
-       }
-       function createDB(){
-           const dbName = document.getElementById('txtDB').value
-           const dbVersion = document.getElementById('txVersion').value
-           const request =  indexedDB.open(dbName, dbVersion)
- 
-           //on upgrade needed
-           request.onupgradeneeded = e => {
-               db = e.target.result
- 
-               var song = db.createObjectStore('song', {keyPath: 'title'})
-               var anime = db.createObjectStore('anime', {keyPath: 'title'})
- 
-               alert('upgrade is called database name:' + db.name + ', version:' + db.version)
- 
-           }
-           //on success
-           request.onsuccess = e => {
-               db = e.target.result
-               alert('success is called database name:' + db.name + ', version:' + db.version)
-           }
-           //on error
-           request.onerror = e => {
-               alert('error' + e.target.error)
-           }
-       }
-      
-      
-   </script>
+    <div id="super">
+
+        <h id="hoho">Create the storage</h>
+    <div id="ore">
+        DB<input type = 'text' value = 'anime' id = 'txtDB'><br>
+        Version <input type = 'text' value = '1' id = 'txVersion'><br>
+        <button id = 'btnCreateDB'>Create DB</button><br>
+        <button id = 'addNote'>Add notes</button>
+  
+    </div>
+    <h id="nikanika">Add to the storage</h> 
+    <div id="input_section">
+        Title<input type = 'text' value = '' id = 'title_input'><br>
+        Source<input type = 'text' value = '' id = 'source_input'><br>
+        Song<input type = 'text' value = '' id = 'song_input'>
+        <button id = submit_btn>Submit</button>
+        <button id = clear_btn>clear</button>
+    </div id = 'list_da'>
+    <div><list id = 'list'></list></div>
+    
+    </div>
+    
+  
+    <style>
+        #list{
+            color:white;
+        }
+        #super{
+            background-color: black;
+            text-align: center;
+            border-radius: 20px;
+            padding:2%;
+            padding-bottom:20%;
+            opacity:80%;
+             border:3px solid blue /*linear-gradient(to bottom, rgba(68,255,0,0.5), rgba(177, 0, 59, 0.5)) */
+        }
+        #super > div {
+            margin:auto;
+
+        }
+        #list_da{
+            display: flex;
+            flex-direction: column;
+            background:white;
+            border: 2px solid red;
+            border-radius: 5px;
+            width: 50%;
+            height: 50%;
+            box-shadow: black;
+        }
+        #submit_btn{
+            color:white;
+            background-color:red;
+        }
+        #submit_btn:hover{
+            background-color: black;
+        }
+        #nikanika{
+            color:white;
+        }
+        #clear_btn{
+            background-color: blue;
+            color:white;
+        }
+        #clear_btn:hover{
+            background-color: black;
+        }
+        #input_section{
+            display: flex;
+            flex-direction: column;
+            background:white;
+            border: 2px solid red;
+            border-radius: 5px;
+            width: 50%;
+            height: 50%;
+            box-shadow: black;
+        }
+        #hoho{
+            color:white;
+           
+        }
+        body{
+            background-image: linear-gradient(to bottom, rgba(255,255,0,0.5), rgba(0,0,255,0.5)),
+            url('luffy.jpeg');
+        }
+        #ore{
+            display: flex;
+            flex-direction: column;
+            background:white;
+            border: 2px solid red;
+            border-radius: 5px;
+            width: 50%;
+            height: 50%;
+            box-shadow: black;
+        }
+        #btnCreateDB{
+            background-color: red;
+            color: white;
+           
+        }
+        #btnCreateDB:hover{
+            background-color: black;
+        }
+        #addNote:hover{
+            background-color: black;
+        }
+        #addNote{
+            background-color:blue;
+            color: white;
+        }
+    </style>
+    <script>
+        let request = ""
+        let db = null
+        let anime = ""
+        let song = ""
+        const btnCreateDB = document.getElementById('btnCreateDB')
+        const btnAddNote = document.getElementById('addNote')
+        const btnSubmit = document.getElementById('submit_btn')
+        const submit_form = document.getElementById('input_section')
+        const clear_btn = document.getElementById('clear_btn')
+        let list = document.querySelector('#list')
+        btnCreateDB.addEventListener('click', createDB)
+        btnAddNote.addEventListener('click', add)
+        btnSubmit.addEventListener('click', submit)
+        clear_btn.addEventListener('click', clearForm)
+        var note = [{
+                id: generationZ(),
+                title:"One Piece",
+                source:"https://www.youtube.com/watch?v=H4b2YjVWgqo",
+                song:"https://www.youtube.com/watch?v=dM7x1PNZDo0"
+            }, {
+                id:generationZ(),
+                title:"Kingdom",
+                source:"https://www.youtube.com/watch?v=Xi7xa3fzXQ4",
+                song:''
+            },
+            {
+                id:generationZ(),
+                title:"Naruto",
+                source:"https://www.youtube.com/watch?v=RzClCJFpSoM",
+                song:"https://www.youtube.com/watch?v=ZFoJYI7Q4iA"
+            }
+        ]
+        class nika {
+            constructor(id, title, source, song){
+                this.id = id,
+                this.title = title,
+                this.source = source, 
+                this.song = song
+            }
+        }
+        function submit(){
+            alert('hfiehfih')
+            let new_id = generationZ()
+            let new_title = String(document.getElementById('title_input').value)
+            let new_source = String(document.getElementById('source_input').value)
+            let new_song = String(document.getElementById('song_input').value)
+            var new_item = new nika(new_id, new_title, new_source, new_song)
+            note.push(new_item)
+            alert(note)
+        }
+        function generationZ(){
+        
+            let t = Date.now().toString(36).toLocaleUpperCase()
+            let r = parseInt(Math.random()*Number.MAX_SAFE_INTEGER)
+            r = r.toString(36).slice(0, 12).padStart(12, '0').toLocaleUpperCase()
+
+            return ''.concat(t, '-',r)
+        }
+        function add(){
+            
+            console.log(db)
+            let tx = db.transaction("animebase","readwrite")
+            tx.oncomplete = e => {
+                console.log('success')
+                clearForm()
+                buildlist()
+                console.log('fiehfihf')
+            }
+            tx.onerror = e => alert('error'+ e.target.error)
+  
+            const notes = tx.objectStore('animebase')
+            var hoho = []
+            notes.openCursor().onsuccess = e => {
+                var cursor = e.target.result;
+                if (cursor) {
+                  hoho.push(cursor.value);
+                  cursor.continue();
+                }
+                else {
+                  console.log("Got all customers: " + hoho);
+                }
+            };            
+            for(i=0; i<note.length; i++){
+                notes.add(note[i])
+            }
+            notes.onsuccess = e => {
+                console.log('successfully added objects')
+            }
+            notes.onerror = e => {
+                console.log('error in request to add')
+            }
+        }
+        
+        function createDB(){
+            const dbName = document.getElementById('txtDB').value
+            const dbVersion = document.getElementById('txVersion').value
+            request =  indexedDB.open(dbName, dbVersion)
+  
+            //on upgrade needed
+            request.onupgradeneeded = e => {
+                db = e.target.result
+  
+                // if(!db.objectStoreNames.contains('song')) var song = db.createObjectStore('song', {keyPath: 'title'})
+                var anime = db.createObjectStore('animebase', {keyPath: 'id'})
+                // song.createIndex("title", "URL", { unique: false })
+             //    anime.createIndex("title", note.title, {unique:true})
+             //    anime.createIndex("source", note.source, {unique:true})
+             //    anime.createIndex("song", note.song, {unique:true})
+                alert('upgrade is called database name:' + db.name + ', version:' + db.version)
+  
+            }
+            //on success
+            request.onsuccess = e => {
+                db = e.target.result
+                alert('success is called database name:' + db.name + ', version:' + db.version)
+            }
+            //on error
+            request.onerror = e => {
+                alert('error' + e.target.error)
+            }
+        }
+        
+        function clearForm(e){
+            if(e) e.preventDefault()
+            list.innerHTML = ""
+        }
+        function buildlist(){
+            list.innerHTML= '<li>loading...'
+            let tx = db.transaction('animebase', 'readonly')
+            tx.oncomplete = e =>{
+
+            }
+            let store = tx.objectStore('animebase')
+            let getReq = store.getAll()//array returning
+            getReq.onsuccess = e => {
+                let request = e.target
+                console.log({request})
+                list.innerHTML = request.result.map(e => {
+                    return '<li id= "' + e.id + '">' + e.title + "," + e.source + "," +e.song
+                }).join('\n')
+                
+            }
+            getReq.onerror = e =>{
+                alert('error')
+            }
+        }
+        
+    </script>
 </body>
 </html>
 
