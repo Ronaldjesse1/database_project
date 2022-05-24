@@ -133,22 +133,25 @@
         btnAddNote.addEventListener('click', add)
         btnSubmit.addEventListener('click', submit)
         clear_btn.addEventListener('click', clearForm)
+        document.addEventListener('keydown', e =>{
+            if(e.key = 'return') buildlist()
+        })
         var note = [{
                 id: generationZ(),
                 title:"One Piece",
-                source:"https://www.youtube.com/watch?v=H4b2YjVWgqo",
-                song:"https://www.youtube.com/watch?v=dM7x1PNZDo0"
+                source:'<iframe width="560" height="315" src="https://www.youtube.com/embed/H4b2YjVWgqo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+                song:'<iframe width="560" height="315" src="https://www.youtube.com/embed/dM7x1PNZDo0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
             }, {
                 id:generationZ(),
                 title:"Kingdom",
-                source:"https://www.youtube.com/watch?v=Xi7xa3fzXQ4",
-                song:''
+                source:'<iframe width="560" height="315" src="https://www.youtube.com/embed/-oRMEgRwv6k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+                song:'<iframe width="560" height="315" src="https://www.youtube.com/embed/Xi7xa3fzXQ4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
             },
             {
                 id:generationZ(),
                 title:"Naruto",
-                source:"https://www.youtube.com/watch?v=RzClCJFpSoM",
-                song:"https://www.youtube.com/watch?v=ZFoJYI7Q4iA"
+                source:'<iframe width="560" height="315" src="https://www.youtube.com/embed/RzClCJFpSoM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+                song:'<iframe width="560" height="315" src="https://www.youtube.com/embed/ZFoJYI7Q4iA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
             }
         ]
         class nika {
@@ -182,10 +185,8 @@
             console.log(db)
             let tx = db.transaction("animebase","readwrite")
             tx.oncomplete = e => {
-                console.log('success')
                 clearForm()
                 buildlist()
-                console.log('fiehfihf')
             }
             tx.onerror = e => alert('error'+ e.target.error)
   
@@ -256,8 +257,9 @@
             getReq.onsuccess = e => {
                 let request = e.target
                 console.log({request})
+                
                 list.innerHTML = request.result.map(e => {
-                    return '<li id= "' + e.id + '">' + e.title + "," + e.source + "," +e.song
+                    return '<div id= "' + e.id + '">' + e.title + "<br>" + e.source + "<br>" +e.song +'</div>'
                 }).join('\n')
                 
             }
@@ -269,4 +271,3 @@
     </script>
 </body>
 </html>
-
